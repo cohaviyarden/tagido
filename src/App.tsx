@@ -1,10 +1,10 @@
 
 import './App.css';
-import InitCart from './pages/InitCart/InitCart';
+import InitCartPage from './pages/InitCartPage/InitCartPage';
 
 function App() {
   return (
-    <InitCart/>
+    <InitCartPage/>
   );
 }
 
