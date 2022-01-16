@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Vote } from "../../../types";
 import BaseItem from "../BaseItem";
+import { HeaderItemResult } from "../ItemResult/style";
 import { HeaderItemInit } from "../style";
-import { BodyContainer, CommentsContainer } from "./style";
+import { BodyContainer, Border, CommentItem, CommentsContainer, Row, Square, SumOfVotes } from "./style";
 
 export interface ItemProps {
   image: string;
@@ -25,18 +26,26 @@ const ItemVote = (props: ItemProps) => {
   return (
     <BaseItem>
       <BaseItem.Image {...props} />
-      <HeaderItemInit>
+      <BaseItem.Body>
+      <HeaderItemResult>
         <BaseItem.Title {...props} />
         <BaseItem.Price {...props} />
-      </HeaderItemInit>
+      </HeaderItemResult>
       <BodyContainer>
-        <p>{sumOfVotes} votes</p>
+        <SumOfVotes>{sumOfVotes} votes</SumOfVotes>
         <CommentsContainer>
-          {props.votes.map((voteItem, index) => {
-            return <p key={index}>{voteItem.comment}</p>;
+          <Border />
+          {props.votes.map((itemVote, index) => {
+            return (
+            <Row>
+              <Square />
+              <CommentItem key={index}>{itemVote.comment}</CommentItem>
+            </Row>
+            );
           })}
         </CommentsContainer>
       </BodyContainer>
+      </BaseItem.Body>
     </BaseItem>
   );
 };

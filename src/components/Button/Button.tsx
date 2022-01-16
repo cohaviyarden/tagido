@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./style";
-import { ButtonStyled, Label } from "./style";
+import { ButtonStyled } from "./style";
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   addOrRemove: () => void
@@ -14,8 +14,8 @@ const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
   };
 
   return (
-    <ButtonStyled style={{backgroundColor:`${touched ? 'green' : 'grey'}`}} onClick={changeColor} {...props}>
-      <Label>{props.children}</Label>
+    <ButtonStyled style={{backgroundColor:`${touched ? '#66CDAA' : 'grey'}`}} onClick={changeColor} {...props}>
+      {props.children}
     </ButtonStyled>
   );
 };

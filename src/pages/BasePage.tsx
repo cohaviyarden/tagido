@@ -21,7 +21,7 @@ BasePage.Header = function BasePageHeader(props: any) {
 };
 
 BasePage.Title = function BasePageTitle() {
-  return <Title>Tagido</Title>;
+  return <Title>TAGIDO</Title>;
 };
 BasePage.Subtitle = function BasePageSubtitle(props: any) {
   return <Subtitle>{props.children}</Subtitle>;
