@@ -4,7 +4,6 @@ import styled from "styled-components";
 export const ButtonStyled = styled.button`
   height: 36px;
   width: 200px;
-  border-radius: 20px;
   background: grey;
   cursor: pointer;
   display: flex;
