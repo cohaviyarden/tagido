@@ -24,7 +24,23 @@ const InitCartPage = () => {
     ? "Request failed!"
     : isLoadingItems
     ? "is loading..."
-    : !items && "No items found!";
+    : !items
+    ? "No items found!"
+    : items.map((item: ItemType) => {
+        return (
+          <ItemInit
+            key={item["item-id"]}
+            image={item["image-url"]}
+            title={item.name}
+            price={item.price}
+            button={{
+              addOrRemove: () => {
+                addOrRemoveItem(item);
+              },
+            }}
+          />
+        );
+      });
 
   useEffect(() => {
     const transformItems = (data: any) => {
@@ -78,27 +94,7 @@ const InitCartPage = () => {
         <BasePage.Title />
         <BasePage.Subtitle>Choose Items to share</BasePage.Subtitle>
       </BasePage.Header>
-      <BasePage.Body>
-        {content ? (
-          <p>{content}</p>
-        ) : (
-          items.map((item: ItemType) => {
-            return (
-              <ItemInit
-                key={item["item-id"]}
-                image={item["image-url"]}
-                title={item.name}
-                price={item.price}
-                button={{
-                  addOrRemove: () => {
-                    addOrRemoveItem(item);
-                  },
-                }}
-              />
-            );
-          })
-        )}
-      </BasePage.Body>
+      <BasePage.Body>{content}</BasePage.Body>
       <BasePage.Footer>
         <BasePage.Button onClick={onAskFriends}>
           Ask your friends

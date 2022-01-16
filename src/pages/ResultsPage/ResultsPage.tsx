@@ -22,7 +22,22 @@ const ResultsPage = () => {
     ? "Request failed!"
     : isLoadingItems
     ? "is loading..."
-    : !items && "No items found!";
+    : !items
+    ? "No items found!"
+    : items.map((item: ItemType) => {
+        return (
+          <ItemResult
+            key={item["item-id"]}
+            image={item["image-url"]}
+            title={item.name}
+            price={item.price}
+            onAddVotingValue={(value: number) =>
+              addVotingValueToItem(item, value)
+            }
+            onAddComment={(comment: string) => addCommentToItem(item, comment)}
+          />
+        );
+      });
 
   useEffect(() => {
     const transformItems = (data: any) => {
@@ -87,28 +102,7 @@ const ResultsPage = () => {
           <input type="text" value={voterName} onChange={valueChangeHandler} />
         </InputContainer>
       </BasePage.Header>
-      <BasePage.Body>
-        {content ? (
-          <p>{content}</p>
-        ) : (
-          items.map((item: ItemType) => {
-            return (
-              <ItemResult
-                key={item["item-id"]}
-                image={item["image-url"]}
-                title={item.name}
-                price={item.price}
-                onAddVotingValue={(value: number) =>
-                  addVotingValueToItem(item, value)
-                }
-                onAddComment={(comment: string) =>
-                  addCommentToItem(item, comment)
-                }
-              />
-            );
-          })
-        )}
-      </BasePage.Body>
+      <BasePage.Body>{content}</BasePage.Body>
       <BasePage.Footer>
         <BasePage.Button onClick={onSendVoting}>Done!</BasePage.Button>
       </BasePage.Footer>

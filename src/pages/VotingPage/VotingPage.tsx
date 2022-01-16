@@ -17,7 +17,19 @@ const VotingPage = () => {
     ? "Request failed!"
     : isLoadingItems
     ? "is loading..."
-    : !items && "No items found!";
+    : !items
+    ? "No items found!"
+    : items.map((item: ItemType) => {
+        return (
+          <ItemVote
+            key={item["item-id"]}
+            image={item["image-url"]}
+            title={item.name}
+            price={item.price}
+            votes={item.votes}
+          />
+        );
+      });
 
   useEffect(() => {
     const transformItems = (data: any) => {
@@ -53,23 +65,7 @@ const VotingPage = () => {
         <BasePage.Title />
         <BasePage.Subtitle>So this is what your friends say</BasePage.Subtitle>
       </BasePage.Header>
-      <BasePage.Body>
-        {content ? (
-          <p>{content}</p>
-        ) : (
-          items.map((item: ItemType) => {
-            return (
-              <ItemVote
-                key={item["item-id"]}
-                image={item["image-url"]}
-                title={item.name}
-                price={item.price}
-                votes={item.votes}
-              />
-            );
-          })
-        )}
-      </BasePage.Body>
+      <BasePage.Body>{content}</BasePage.Body>
       <BasePage.Footer>
         <BasePage.Button onClick={onDoneVoting}>
           Stop rating, go shopping
