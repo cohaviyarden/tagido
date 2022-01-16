@@ -1,88 +1,105 @@
 import { useEffect, useState } from "react";
-import Button from "../../components/Button/Button";
-import Item from "../../components/Item/Item";
+import ItemInit from "../../components/Item/ItemInit/ItemInit";
 import useHttp from "../../hooks/useHttp";
 import { useParams } from "react-router-dom";
-import "./style";
-import { Header, Footer, ItemsContainer, LayoutContainer } from "./style";
+import BasePage from "../BasePage";
+import { ItemType } from "../../types";
+import { useNavigate } from "react-router-dom";
 
-interface Item {
-  [`item-id`]: string;
-  [`image-url`]: string;
-  name: string;
-  price: string;
-}
 const InitCartPage = () => {
   const params = useParams();
-  const [items, setItems] = useState<Item[]>([]);
-  const [votingList, setVotingList] = useState<Item[]>([]);
+  const [items, setItems] = useState<ItemType[]>([]);
+  const [votingList, setVotingList] = useState<ItemType[]>([]);
+  const navigate = useNavigate();
 
   const {
-    isLoading: isLoadingItemsFromCart,
-    error: errorItemsFromCart,
+    isLoading: isLoadingItems,
+    error: isErrorItems,
     sendRequest: getItemsFromCart,
   } = useHttp();
+  const { sendRequest: sendItemsToVote } = useHttp();
 
   useEffect(() => {
     const transformItems = (data: any) => {
       setItems(data.products);
-    }
-    getItemsFromCart({
-      url:`https://initvoting.azurewebsites.net/api/initvote?id=${params.id}`},transformItems);
-      
+    };
+    getItemsFromCart(
+      {
+        //${params.id}
+        url: `https://initvoting.azurewebsites.net/api/initvote?id=122323224`,
+      },
+      transformItems
+    );
+    return () => {
+      setItems([]);
+    };
   }, [getItemsFromCart]);
 
-  const {
-    isLoading: isLoadingSendVoting,
-    error: errorSendVoting,
-    sendRequest: sendVotingRequest,
-  } = useHttp();
-
-  const onAddItemToVotingList = (item: Item) => {
-    setVotingList((votingList) => [...votingList, item]);
-  };
   const onAskFriends = async () => {
-    votingList.map((item) => {
-      sendVotingRequest({
-        url: "https://initvoting.azurewebsites.net/api/startvoting",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    !votingList.length && alert("You need to add items");
+    const responseDate = (data: any) => {
+      data && alert("Your items are on the way to your friends!");
+      navigate("/resultsPage");
+    };
+    votingList.length &&
+      sendItemsToVote(
+        {
+          url: "https://initvoting.azurewebsites.net/api/startvoting",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: { products: votingList },
         },
-        body: { item },
-      });
-    });
+        responseDate
+      );
+  };
+
+  const addOrRemoveItem = (item: ItemType) => {
+    const index = votingList.indexOf(item);
+    if (index > -1) {
+      votingList.splice(index, 1);
+    } else {
+      setVotingList((votingList) => [...votingList, item]);
+    }
   };
   return (
-    <LayoutContainer>
-      <Header>
-        <p>Tagido</p>
-        <p>Choose Items to share</p>
-      </Header>
-      <ItemsContainer>
-        {items &&
-          items.map((item: Item) => {
-            <Item
-              key={item["item-id"]}
-              image={item["image-url"]}
-              title={item.name}
-              price={item.price}
-              button={{
-                onClick: () => {
-                  onAddItemToVotingList(item);
-                },
-              }}
-            />;
-          })}
-      </ItemsContainer>
-      <Footer>
-        <Button onClick={onAskFriends}>Ask your friends</Button>
-      </Footer>
-    </LayoutContainer>
+    <BasePage>
+      <BasePage.Header>
+        <BasePage.Title />
+        <BasePage.Subtitle>Choose Items to share</BasePage.Subtitle>
+      </BasePage.Header>
+      <BasePage.Body>
+        {isErrorItems ? (
+          <p>Request failed!</p>
+        ) : isLoadingItems ? (
+          <p>is loading... </p>
+        ) : items ? (
+          items.map((item: ItemType) => {
+            return (
+              <ItemInit
+                key={item["item-id"]}
+                image={item["image-url"]}
+                title={item.name}
+                price={item.price}
+                button={{
+                  addOrRemove: () => {
+                    addOrRemoveItem(item);
+                  },
+                }}
+              />
+            );
+          })
+        ) : (
+          <p>No items found!</p>
+        )}
+      </BasePage.Body>
+      <BasePage.Footer>
+        <BasePage.Button onClick={onAskFriends}>
+          Ask your friends
+        </BasePage.Button>
+      </BasePage.Footer>
+    </BasePage>
   );
 };
 export default InitCartPage;
-function setVotingList(arg0: (votingList: any) => any[]) {
-  throw new Error("Function not implemented.");
-}
-
