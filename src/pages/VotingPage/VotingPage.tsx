@@ -13,6 +13,12 @@ const VotingPage = () => {
   } = useHttp();
   const { sendRequest: getUrlBack } = useHttp();
 
+  const content = isErrorItems
+    ? "Request failed!"
+    : isLoadingItems
+    ? "is loading..."
+    : !items && "No items found!";
+
   useEffect(() => {
     const transformItems = (data: any) => {
       setItems(data.products);
@@ -48,11 +54,9 @@ const VotingPage = () => {
         <BasePage.Subtitle>So this is what your friends say</BasePage.Subtitle>
       </BasePage.Header>
       <BasePage.Body>
-        {isErrorItems ? (
-          <p>Request failed!</p>
-        ) : isLoadingItems ? (
-          <p>is loading... </p>
-        ) : items ? (
+        {content ? (
+          <p>{content}</p>
+        ) : (
           items.map((item: ItemType) => {
             return (
               <ItemVote
@@ -64,8 +68,6 @@ const VotingPage = () => {
               />
             );
           })
-        ) : (
-          <p>No items found!</p>
         )}
       </BasePage.Body>
       <BasePage.Footer>

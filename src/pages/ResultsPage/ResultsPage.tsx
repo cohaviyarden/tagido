@@ -18,6 +18,12 @@ const ResultsPage = () => {
 
   const { isLoading, error, sendRequest: votingRequest } = useHttp();
 
+  const content = isErrorItems
+    ? "Request failed!"
+    : isLoadingItems
+    ? "is loading..."
+    : !items && "No items found!";
+
   useEffect(() => {
     const transformItems = (data: any) => {
       data.products.forEach((item: ItemType) => {
@@ -82,11 +88,9 @@ const ResultsPage = () => {
         </InputContainer>
       </BasePage.Header>
       <BasePage.Body>
-        {isErrorItems ? (
-          <p>Request failed!</p>
-        ) : isLoadingItems ? (
-          <p>is loading... </p>
-        ) : items ? (
+        {content ? (
+          <p>{content}</p>
+        ) : (
           items.map((item: ItemType) => {
             return (
               <ItemResult
@@ -103,8 +107,6 @@ const ResultsPage = () => {
               />
             );
           })
-        ) : (
-          <p>No items found!</p>
         )}
       </BasePage.Body>
       <BasePage.Footer>

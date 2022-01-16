@@ -11,13 +11,20 @@ const InitCartPage = () => {
   const [items, setItems] = useState<ItemType[]>([]);
   const [votingList, setVotingList] = useState<ItemType[]>([]);
   const navigate = useNavigate();
-
+  // const [content, setContent] = useState("");
   const {
     isLoading: isLoadingItems,
     error: isErrorItems,
     sendRequest: getItemsFromCart,
   } = useHttp();
-  const { sendRequest: sendItemsToVote } = useHttp();
+
+  const { error: isErrorSendItems, sendRequest: sendItemsToVote } = useHttp();
+
+  const content = isErrorItems
+    ? "Request failed!"
+    : isLoadingItems
+    ? "is loading..."
+    : !items && "No items found!";
 
   useEffect(() => {
     const transformItems = (data: any) => {
@@ -36,7 +43,9 @@ const InitCartPage = () => {
   }, [getItemsFromCart]);
 
   const onAskFriends = async () => {
-    !votingList.length && alert("You need to add items");
+    if (!votingList.length) {
+      alert("You need to add items");
+    }
     const responseDate = (data: any) => {
       data && alert("Your items are on the way to your friends!");
       navigate("/resultsPage");
@@ -70,11 +79,9 @@ const InitCartPage = () => {
         <BasePage.Subtitle>Choose Items to share</BasePage.Subtitle>
       </BasePage.Header>
       <BasePage.Body>
-        {isErrorItems ? (
-          <p>Request failed!</p>
-        ) : isLoadingItems ? (
-          <p>is loading... </p>
-        ) : items ? (
+        {content ? (
+          <p>{content}</p>
+        ) : (
           items.map((item: ItemType) => {
             return (
               <ItemInit
@@ -90,8 +97,6 @@ const InitCartPage = () => {
               />
             );
           })
-        ) : (
-          <p>No items found!</p>
         )}
       </BasePage.Body>
       <BasePage.Footer>
