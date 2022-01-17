@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ItemVote from "../../components/Item/ItemVote/ItemVote";
+import Loader from "../../components/Loader/Loader";
 import useHttp from "../../hooks/useHttp";
 import { ItemType } from "../../types";
 import BasePage from "../BasePage";
@@ -12,24 +13,26 @@ const VotingPage = () => {
     sendRequest: getItemsToVoting,
   } = useHttp();
   const { sendRequest: getUrlBack } = useHttp();
-
-  const content = isErrorItems
-    ? "Request failed!"
-    : isLoadingItems
-    ? "is loading..."
-    : !items
-    ? "No items found!"
-    : items.map((item: ItemType) => {
-        return (
-          <ItemVote
-            key={item["item-id"]}
-            image={item["image-url"]}
-            title={item.name}
-            price={item.price}
-            votes={item.votes}
-          />
-        );
-      });
+  
+  const content = isErrorItems ? (
+    "Request failed!"
+  ) : isLoadingItems ? (
+    <Loader loading={true} message={"Loading your results..."} />
+  ) : !items ? (
+    "No items found!"
+  ) : (
+    items.map((item: ItemType) => {
+      return (
+        <ItemVote
+          key={item["item-id"]}
+          image={item["image-url"]}
+          title={item.name}
+          price={item.price}
+          votes={item.votes}
+        />
+      );
+    })
+  );
 
   useEffect(() => {
     const transformItems = (data: any) => {

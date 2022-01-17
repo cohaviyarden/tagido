@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import ItemResult from "../../components/Item/ItemResult/ItemResult";
-import { InputContainer } from "../../components/Item/style";
 import useHttp from "../../hooks/useHttp";
 import { ItemType } from "../../types";
 import BasePage from "../BasePage";
 import { useNavigate } from "react-router-dom";
+import { InputContainer, Input, InputTitle } from "./style";
+import Loader from "../../components/Loader/Loader";
 
 const ResultsPage = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -16,28 +17,30 @@ const ResultsPage = () => {
     sendRequest: getItemsToVoting,
   } = useHttp();
 
-  const { isLoading, error, sendRequest: votingRequest } = useHttp();
+  const { sendRequest: votingRequest } = useHttp();
 
-  const content = isErrorItems
-    ? "Request failed!"
-    : isLoadingItems
-    ? "is loading..."
-    : !items
-    ? "No items found!"
-    : items.map((item: ItemType) => {
-        return (
-          <ItemResult
-            key={item["item-id"]}
-            image={item["image-url"]}
-            title={item.name}
-            price={item.price}
-            onAddVotingValue={(value: number) =>
-              addVotingValueToItem(item, value)
-            }
-            onAddComment={(comment: string) => addCommentToItem(item, comment)}
-          />
-        );
-      });
+  const content = isErrorItems ? (
+    "Request failed!"
+  ) : isLoadingItems ? (
+    <Loader loading={true} message={"Loading items..."} />
+  ) : !items ? (
+    "No items found!"
+  ) : (
+    items.map((item: ItemType) => {
+      return (
+        <ItemResult
+          key={item["item-id"]}
+          image={item["image-url"]}
+          title={item.name}
+          price={item.price}
+          onAddVotingValue={(value: number) =>
+            addVotingValueToItem(item, value)
+          }
+          onAddComment={(comment: string) => addCommentToItem(item, comment)}
+        />
+      );
+    })
+  );
 
   useEffect(() => {
     const transformItems = (data: any) => {
@@ -98,8 +101,8 @@ const ResultsPage = () => {
         <BasePage.Title />
         <BasePage.Subtitle>Rate my shopping bag</BasePage.Subtitle>
         <InputContainer>
-          <p>Enter your name</p>
-          <input type="text" value={voterName} onChange={valueChangeHandler} />
+          <InputTitle>Enter your name</InputTitle>
+          <Input type="text" value={voterName} onChange={valueChangeHandler} />
         </InputContainer>
       </BasePage.Header>
       <BasePage.Body>{content}</BasePage.Body>

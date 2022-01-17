@@ -5,42 +5,45 @@ import { useParams } from "react-router-dom";
 import BasePage from "../BasePage";
 import { ItemType } from "../../types";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader/Loader";
 
 const InitCartPage = () => {
   const params = useParams();
   const [items, setItems] = useState<ItemType[]>([]);
   const [votingList, setVotingList] = useState<ItemType[]>([]);
   const navigate = useNavigate();
-  // const [content, setContent] = useState("");
+    
   const {
     isLoading: isLoadingItems,
     error: isErrorItems,
     sendRequest: getItemsFromCart,
   } = useHttp();
+      
+  const { sendRequest: sendItemsToVote } = useHttp();
 
-  const { error: isErrorSendItems, sendRequest: sendItemsToVote } = useHttp();
-
-  const content = isErrorItems
-    ? "Request failed!"
-    : isLoadingItems
-    ? "is loading..."
-    : !items
-    ? "No items found!"
-    : items.map((item: ItemType) => {
-        return (
-          <ItemInit
-            key={item["item-id"]}
-            image={item["image-url"]}
-            title={item.name}
-            price={item.price}
-            button={{
-              addOrRemove: () => {
-                addOrRemoveItem(item);
-              },
-            }}
-          />
-        );
-      });
+  const content = isErrorItems ? (
+    "Request failed!"
+  ) : isLoadingItems ? (
+    <Loader loading={true} message={"Loading items..."} />
+  ) : !items ? (
+    "No items found!"
+  ) : (
+    items.map((item: ItemType) => {
+      return (
+        <ItemInit
+          key={item["item-id"]}
+          image={item["image-url"]}
+          title={item.name}
+          price={item.price}
+          button={{
+            addOrRemove: () => {
+              addOrRemoveItem(item);
+            },
+          }}
+        />
+      );
+    })
+  );
 
   useEffect(() => {
     const transformItems = (data: any) => {
