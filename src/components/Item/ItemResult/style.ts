@@ -10,7 +10,6 @@ export const HeaderItemResult = styled.div`
 export const Icon = styled.img`
   height: 17px;
 `;
-
 export const AddComment = styled.div`
   font-size: 14px;
 `;

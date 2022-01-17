@@ -13,7 +13,7 @@ const VotingPage = () => {
     sendRequest: getItemsToVoting,
   } = useHttp();
   const { sendRequest: getUrlBack } = useHttp();
-
+  
   const content = isErrorItems ? (
     "Request failed!"
   ) : isLoadingItems ? (

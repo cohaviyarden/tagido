@@ -12,13 +12,13 @@ const InitCartPage = () => {
   const [items, setItems] = useState<ItemType[]>([]);
   const [votingList, setVotingList] = useState<ItemType[]>([]);
   const navigate = useNavigate();
-
+    
   const {
     isLoading: isLoadingItems,
     error: isErrorItems,
     sendRequest: getItemsFromCart,
   } = useHttp();
-
+      
   const { sendRequest: sendItemsToVote } = useHttp();
 
   const content = isErrorItems ? (

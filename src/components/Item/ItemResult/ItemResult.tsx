@@ -15,6 +15,7 @@ import { IconButton } from "../style";
 import { useState } from "react";
 import { Input } from "../../../pages/ResultsPage/style";
 
+
 export interface ItemProps {
   image: string;
   title: string;

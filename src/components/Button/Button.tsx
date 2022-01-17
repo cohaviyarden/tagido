@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./style";
 import { ButtonStyled } from "./style";
-
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   addOrRemove: () => void
 }
