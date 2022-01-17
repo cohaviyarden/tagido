@@ -23,12 +23,12 @@ export interface ItemProps {
   onAddComment: (comment: string) => void;
 }
 const ItemResult = (props: ItemProps) => {
-  const [commentValue, setCommentValue] = useState("");
-  const [votingValue, setVotingValue] = useState(0);
+  const [commentValue, setCommentValue] = useState<string>("");
+  const [votingValue, setVotingValue] = useState<number>(0);
 
   const valueChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
     setCommentValue(e.currentTarget.value);
-    props.onAddComment(commentValue);
+    props.onAddComment(e.currentTarget.value);
   };
   const onPlusVoting = () => {
     if (votingValue < 10) {

@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { Vote } from "../../../types";
 import BaseItem from "../BaseItem";
 import { HeaderItemResult } from "../ItemResult/style";
-import { HeaderItemInit } from "../style";
-import { BodyContainer, Border, CommentItem, CommentsContainer, Row, Square, SumOfVotes } from "./style";
+import {
+  BodyContainer,
+  Border,
+  CommentItem,
+  CommentsContainer,
+  Row,
+  Square,
+  SumOfVotes,
+} from "./style";
 
 export interface ItemProps {
   image: string;
@@ -13,38 +20,42 @@ export interface ItemProps {
 }
 
 const ItemVote = (props: ItemProps) => {
-  const [sumOfVotes, setSumOfVotes] = useState<number>();
-  let sum = 0;
-  
+  const [sumOfVotes, setSumOfVotes] = useState<number>(0);
+  const [sumOfComments, setSumOfComments] = useState<number>(0);
   useEffect(() => {
+    let sumVotes = 0,
+      sumComments = 0;
     props.votes.forEach((voteItem) => {
-      sum += voteItem.vote;
+      sumVotes += voteItem.vote;
+      voteItem.comment && sumComments++;
     });
-    setSumOfVotes(sum);
+    setSumOfVotes(sumVotes);
+    setSumOfComments(sumComments);
   }, [props.votes]);
-  
+
   return (
     <BaseItem>
       <BaseItem.Image {...props} />
       <BaseItem.Body>
-      <HeaderItemResult>
-        <BaseItem.Title {...props} />
-        <BaseItem.Price {...props} />
-      </HeaderItemResult>
-      <BodyContainer>
-        <SumOfVotes>{sumOfVotes} votes</SumOfVotes>
-        <CommentsContainer>
-          <Border />
-          {props.votes.map((itemVote, index) => {
-            return (
-            <Row>
-              <Square />
-              <CommentItem key={index}>{itemVote.comment}</CommentItem>
-            </Row>
-            );
-          })}
-        </CommentsContainer>
-      </BodyContainer>
+        <HeaderItemResult>
+          <BaseItem.Title {...props} />
+          <BaseItem.Price {...props} />
+        </HeaderItemResult>
+        <BodyContainer>
+          <SumOfVotes>{sumOfVotes} votes</SumOfVotes>
+          {sumOfComments && <span>, {sumOfComments} comments</span>}
+          <CommentsContainer>
+            <Border />
+            {props.votes.map((itemVote, index) => {
+              return (
+                <Row>
+                  <Square />
+                  <CommentItem key={index}>{itemVote.comment}</CommentItem>
+                </Row>
+              );
+            })}
+          </CommentsContainer>
+        </BodyContainer>
       </BaseItem.Body>
     </BaseItem>
   );

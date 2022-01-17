@@ -4,7 +4,8 @@ import useHttp from "../../hooks/useHttp";
 import { ItemType } from "../../types";
 import BasePage from "../BasePage";
 import { useNavigate } from "react-router-dom";
-import { InputContainer,Input, InputTitle } from "./style";
+import { InputContainer, Input, InputTitle } from "./style";
+import Loader from "../../components/Loader/Loader";
 
 const ResultsPage = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -18,26 +19,28 @@ const ResultsPage = () => {
 
   const { sendRequest: votingRequest } = useHttp();
 
-  const content = isErrorItems
-    ? "Request failed!"
-    : isLoadingItems
-    ? "is loading..."
-    : !items
-    ? "No items found!"
-    : items.map((item: ItemType) => {
-        return (
-          <ItemResult
-            key={item["item-id"]}
-            image={item["image-url"]}
-            title={item.name}
-            price={item.price}
-            onAddVotingValue={(value: number) =>
-              addVotingValueToItem(item, value)
-            }
-            onAddComment={(comment: string) => addCommentToItem(item, comment)}
-          />
-        );
-      });
+  const content = isErrorItems ? (
+    "Request failed!"
+  ) : isLoadingItems ? (
+    <Loader loading={true} message={"Loading items..."} />
+  ) : !items ? (
+    "No items found!"
+  ) : (
+    items.map((item: ItemType) => {
+      return (
+        <ItemResult
+          key={item["item-id"]}
+          image={item["image-url"]}
+          title={item.name}
+          price={item.price}
+          onAddVotingValue={(value: number) =>
+            addVotingValueToItem(item, value)
+          }
+          onAddComment={(comment: string) => addCommentToItem(item, comment)}
+        />
+      );
+    })
+  );
 
   useEffect(() => {
     const transformItems = (data: any) => {
