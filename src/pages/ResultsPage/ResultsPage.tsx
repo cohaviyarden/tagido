@@ -6,18 +6,40 @@ import BasePage from "../BasePage";
 import { useNavigate } from "react-router-dom";
 import { InputContainer, Input, InputTitle } from "./style";
 import Loader from "../../components/Loader/Loader";
+import { Modal } from "../../components/Modal/Modal";
 
 const ResultsPage = () => {
   const [items, setItems] = useState<any[]>([]);
   const [voterName, setVoterName] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [success, setSuccess] = useState<Boolean>(false);
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
+
   const {
     isLoading: isLoadingItems,
     error: isErrorItems,
     sendRequest: getItemsToVoting,
   } = useHttp();
 
-  const { sendRequest: votingRequest } = useHttp();
+  const {
+    isLoading: isLoadingSendResults,
+    error: errorSendResults,
+    sendRequest: votingRequest,
+  } = useHttp();
+
+  const addVotingValueToItem = (item: ItemType, value: Number) => {
+    const itemFound = items.find((el) => el === item);
+    itemFound.vote = value;
+  };
+  const addCommentToItem = (item: ItemType, comment: string) => {
+    const itemFound = items.find((el) => el === item);
+    itemFound.comment = comment;
+  };
+
+  const valueChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
+    setVoterName(e.currentTarget.value);
+  };
 
   const content = isErrorItems ? (
     "Request failed!"
@@ -62,11 +84,25 @@ const ResultsPage = () => {
     };
   }, [getItemsToVoting]);
 
-  const onSendVoting = async () => {
-    !voterName && alert("You must enter name");
-    const responseDate = (data: any) => {
-      data && alert("Thank for your voting!");
+  const closeModal = () => {
+    if (success) {
       navigate("/votingPage");
+    }
+    !isLoadingSendResults && setShowModal(false);
+  };
+
+  const onSendVoting = async () => {
+    setShowModal(true);
+    !voterName
+      ? setMessage("You must enter name")
+      : items
+      ? setMessage("Loading...")
+      : setMessage("There are no items");
+    const responseDate = (data: any) => {
+      errorSendResults
+        ? setMessage("Try again!")
+        : data.products && setMessage("Thank for your voting!");
+      if (data) setSuccess(true);
     };
     voterName &&
       items.length &&
@@ -82,18 +118,6 @@ const ResultsPage = () => {
         responseDate
       );
   };
-  const addVotingValueToItem = (item: ItemType, value: Number) => {
-    const itemFound = items.find((el) => el === item);
-    itemFound.vote = value;
-  };
-  const addCommentToItem = (item: ItemType, comment: string) => {
-    const itemFound = items.find((el) => el === item);
-    itemFound.comment = comment;
-  };
-
-  const valueChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
-    setVoterName(e.currentTarget.value);
-  };
 
   return (
     <BasePage>
@@ -108,6 +132,12 @@ const ResultsPage = () => {
       <BasePage.Body>{content}</BasePage.Body>
       <BasePage.Footer>
         <BasePage.Button onClick={onSendVoting}>Done!</BasePage.Button>
+        <Modal
+          message={message}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          closeModal={closeModal}
+        />
       </BasePage.Footer>
     </BasePage>
   );
