@@ -3,7 +3,7 @@ import ItemResult from "../../components/Item/ItemResult/ItemResult";
 import useHttp from "../../hooks/useHttp";
 import { ItemType } from "../../types";
 import BasePage from "../BasePage";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { InputContainer, Input, InputTitle } from "./style";
 import Loader from "../../components/Loader/Loader";
 import { Modal } from "../../components/Modal/Modal";
@@ -15,6 +15,7 @@ const ResultsPage = () => {
   const [success, setSuccess] = useState<Boolean>(false);
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const {
     isLoading: isLoadingItems,
@@ -74,15 +75,16 @@ const ResultsPage = () => {
     };
     getItemsToVoting(
       {
-        //${params.id}
-        url: `https://initvoting.azurewebsites.net/api/initvoting?id=73WakrfVbNJBaAmhQtEeDv`,
+        url: `https://initvoting.azurewebsites.net/api/initvoting?id=${searchParams.get(
+          "id"
+        )}`,
       },
       transformItems
     );
     return () => {
       setItems([]);
     };
-  }, [getItemsToVoting]);
+  }, [getItemsToVoting, searchParams]);
 
   const closeModal = () => {
     if (success) {

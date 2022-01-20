@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import ItemInit from "../../components/Item/ItemInit/ItemInit";
 import useHttp from "../../hooks/useHttp";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import BasePage from "../BasePage";
 import { ItemType } from "../../types";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader/Loader";
 import Modal from "../../components/Modal/Modal";
+import { MIN_NUM_OF_VOTE } from "../../theme";
 
 const InitCartPage = () => {
-  const params = useParams();
   const [items, setItems] = useState<ItemType[]>([]);
   const [votingList, setVotingList] = useState<ItemType[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [success, setSuccess] = useState<Boolean>(false);
-  const [message, setMessage] = useState<string>(" ");
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const {
     isLoading: isLoadingItems,
@@ -31,7 +32,7 @@ const InitCartPage = () => {
 
   const addOrRemoveItem = (item: ItemType) => {
     const index = votingList.indexOf(item);
-    if (index > -1) {
+    if (index >= MIN_NUM_OF_VOTE) {
       votingList.splice(index, 1);
     } else {
       setVotingList((votingList) => [...votingList, item]);
@@ -68,15 +69,14 @@ const InitCartPage = () => {
     };
     getItemsFromCart(
       {
-        //${params.id}
-        url: `https://initvoting.azurewebsites.net/api/initvote?id=122323224`,
+        url: `https://initvoting.azurewebsites.net/api/initvote?id=${searchParams.get('id')}`,
       },
       transformItems
     );
     return () => {
       setItems([]);
     };
-  }, [getItemsFromCart]);
+  }, [getItemsFromCart, searchParams]);
 
   const closeModal = () => {
     if (success) {
@@ -110,6 +110,7 @@ const InitCartPage = () => {
         responseDate
       );
   };
+  
   return (
     <BasePage>
       <BasePage.Header>
